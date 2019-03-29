@@ -2,10 +2,12 @@ package sample.Collisions;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -29,20 +31,29 @@ public class MouseEvents extends Application {
             c.setCenterY(200);
             c.setFill(Color.RED);
 
+        Circle c2 = new Circle(100);
+        c2.setCenterX(300);
+        c2.setCenterY(200);
+        c2.setFill(Color.BLACK);
+
           //  c.setOnMouseEntered(event -> c.setFill(Color.GREEN));
           //  c.setOnMouseExited(event -> c.setFill(Color.RED));
 
-
-        new AnimationTimer(){
+        AnimationTimer animation = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 c.addEventHandler(MouseEvent.ANY,event -> mouseHandler(c,event) );
             }
-        }.start();
+        };
+        animation.start();
 
+        c2.setOnMouseDragged( event -> {
+            c2.setTranslateX(event.getSceneX()-c2.getCenterX());
+            c2.setTranslateY(event.getSceneY()-c2.getCenterY());
+            System.out.println(event.getSceneX()+" "+c2.getCenterX());
+        });
 
-
-        root.getChildren().addAll(c);
+        root.getChildren().addAll(c,c2);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -59,14 +70,13 @@ public class MouseEvents extends Application {
             obj.setFill(Color.BLUE);
         }
         if(event.getEventType().equals(MouseEvent.MOUSE_CLICKED)){
-
-            // Why Transition cannot be repeated!?
-            System.out.println(obj.getBoundsInLocal().toString());
-            ScaleTransition st = new ScaleTransition(Duration.seconds(2),obj);
-            st.setToX(1.5);
-            st.setToY(1.5);
-            st.play();
+            System.out.println(obj.getTranslateX());
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(2),obj);
+            double x = obj.getTranslateX();
+            tt.setToX(x+100);
+            tt.play();
         }
+
 
         }
 
